@@ -1,6 +1,6 @@
 package org.fedon.wipro;
 
-import org.fedon.wipro.service.HelloService;
+import org.fedon.wipro.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -10,11 +10,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class DemoJdApplication implements CommandLineRunner {
 
     @Autowired
-    private HelloService service;
+    private FileService service;
 
     @Override
     public void run(String... args) throws Exception {
-        service.hell();
+        // TODO usage
+        long start = System.currentTimeMillis();
+        service.readFile(args[0]);
+        System.out.println((System.currentTimeMillis() - start) / 1000 + " <<");
     }
 
 	public static void main(String[] args) {
