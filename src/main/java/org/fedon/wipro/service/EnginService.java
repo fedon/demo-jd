@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.fedon.wipro.model.InstrumentRecord;
 import org.fedon.wipro.model.InstrumentStat;
-import org.fedon.wipro.service.processor.AverageProcessor;
+import org.fedon.wipro.service.processor.Processor;
+import org.fedon.wipro.service.processor.ProcessorConfig;
+import org.fedon.wipro.service.processor.ProcessorMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +20,13 @@ public class EnginService {
 
     @Autowired
     private DateService dateService;
+    public ProcessorMap processorMap = ProcessorConfig.configProcessors();
 
-    @Autowired
-    private AverageProcessor processor;
 
     private Map<String, InstrumentStat> resultMap = new HashMap<>();
 
     public void process(InstrumentRecord record) {
+        Processor<?> processor = processorMap.getProcessor(record.getInstrument());
         if (dateService.isValidBusinessDay(record.getDate())) {
             InstrumentStat result = resultMap.get(record.getInstrument());
             if (result == null) {
@@ -36,6 +38,9 @@ public class EnginService {
     }
 
     public void publishResult() {
-        resultMap.entrySet().forEach(i -> System.out.println(i.getKey() + " average: " + processor.calculate(i.getValue())));
+        for (String instrument : resultMap.keySet()) {
+            Processor<?> processor = processorMap.getProcessor(instrument);
+            System.out.println("\n\n" + instrument + " " + processor.action() + ": " + processor.calculate(resultMap.get(instrument)));
+        }
     }
 }

@@ -1,6 +1,7 @@
 package org.fedon.wipro.service.processor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import org.fedon.wipro.model.InstrumentRecord;
 import org.fedon.wipro.model.InstrumentStat;
@@ -9,10 +10,27 @@ import org.fedon.wipro.model.InstrumentStat;
  * @author Dmytro Fedonin
  *
  */
-public class MeanProcessor implements Processor<BigDecimal> {
+public class PeriodMeanProcessor implements Processor<BigDecimal> {
+    // inclusive
+    private LocalDate periodStartDate;
+    // inclusive
+    private LocalDate periodEndDate;
+
+    /**
+     * @param periodStartDate
+     * @param periodEndDate
+     */
+    public PeriodMeanProcessor(LocalDate periodStartDate, LocalDate periodEndDate) {
+        super();
+        this.periodStartDate = periodStartDate;
+        this.periodEndDate = periodEndDate;
+    }
 
     @Override
     public void process(InstrumentRecord record, InstrumentStat stat) {
+        if (record.getDate().isBefore(periodStartDate) || record.getDate().isAfter(periodEndDate)) {
+            return;
+        }
         stat.setNumberOfRecords(stat.getNumberOfRecords() + 1);
         stat.getValues().add(record.getValue());
     }
@@ -31,6 +49,6 @@ public class MeanProcessor implements Processor<BigDecimal> {
 
     @Override
     public String action() {
-        return "mean";
+        return "mean from " + periodStartDate + " to " + periodEndDate;
     }
 }

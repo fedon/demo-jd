@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class AverageProcessor {
+public class AverageProcessor implements Processor<BigDecimal> {
 
     public void process(InstrumentRecord record, InstrumentStat stat) {
         stat.setNumberOfRecords(stat.getNumberOfRecords() + 1);
@@ -20,12 +20,17 @@ public class AverageProcessor {
     }
 
     /**
-     * Calculate average of the stat with Sum scale rounded up.
+     * Calculate average of the InstrumentStat with Sum scale rounded up.
      * 
      * @param stat
      * @return sum/numberOfRecords of the InstrumentStat
      */
     public BigDecimal calculate(InstrumentStat stat) {
         return stat.getSum().divide(BigDecimal.valueOf(stat.getNumberOfRecords()), RoundingMode.HALF_UP);
+    }
+
+    @Override
+    public String action() {
+        return "average";
     }
 }

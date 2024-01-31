@@ -28,7 +28,7 @@ public class DateService {
     public boolean isValidBusinessDay(LocalDate date) {
         // TODO check holidays
         if (date.getDayOfWeek().compareTo(DayOfWeek.SATURDAY) == 0 || date.getDayOfWeek().compareTo(DayOfWeek.SUNDAY) == 0) {
-            logger.debug("Weekend found " + date);
+            logger.info("Weekend found " + date);
             return false;
         }
         return !today.isBefore(date);
